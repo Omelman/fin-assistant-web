@@ -1,0 +1,7 @@
+version: '3'
+services: 
+    frontend:
+        image: rea
+        ports:
+            - "3001:3000"        
+        tty: true
