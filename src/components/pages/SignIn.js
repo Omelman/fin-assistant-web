@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import * as ReactBootstrap from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import "./SignIn.css"
 import '../../App.css';
 import Navbar from '../Navbar';
+import Menu from '../../menu/pages/Home.js'
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,10 @@ export default function SignIn() {
   }
 
   function handleSubmit(event) {
-    alert("aloha");
+    alert("congrats");
+    if (email == "cr.frog03@gmail.com") {
+      window.location.href = "/menu";  
+    }
     event.preventDefault();
   }
 

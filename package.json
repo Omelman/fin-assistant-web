@@ -1,8 +1,9 @@
 {
-  "name": "navbar-dropdown-v1",
+  "name": "doass",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -35,5 +36,9 @@
   },
   "devDependencies": {
     "react-bootstrap": "^0.32.4"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/Omelman/fin-assistant-web.git",
+  "author": "danilomelchenko <cr.frog03@gmail.com>",
+  "license": "MIT"
 }
