@@ -9,8 +9,8 @@ import {
 
 const user = {
      avatar: '/static/images/avatars/avatar_6.png',
-     email:  'cr.frog03@gmail.com',
-     name:   'Danila Omelchenko'
+     email:  localStorage.getItem('email'),
+     name:   localStorage.getItem('firstname') + ' ' + localStorage.getItem('lastname')
    };
    
    const WhiteTextTypography = withStyles({

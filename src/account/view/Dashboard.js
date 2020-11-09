@@ -1,15 +1,15 @@
 import React from 'react';
 import NavbarMenu from '../components/NavbarMenu';
 
-function Home() {
+const Dashboard = () => {
   return (
     <>
    <NavbarMenu/>
-    <div className='home'>
-      <h1>Home</h1>
+    <div className='menu'>
+      <h1>Dashboard</h1>
     </div>
     </>
-  );
+  )
 }
 
-export default Home;
+export default Dashboard;
