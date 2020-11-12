@@ -9,28 +9,11 @@ import SignUp  from './components/signup/SignUp';
 import SignIn  from './components/signin/SignIn';
 import AboutUs from './components/AboutUs';
 import './App.css';
+import PrivateRoute from './PrivateRoute'
 
-const CheckSession = () =>{
-const data = {
-  "data": {
-      "attributes": {
-          "email": localStorage.getItem('email'),
-      }
-  }
-}
-const response = fetch('http://159.224.16.138:8000/assistant/check_token', {
-          method: 'POST',
-          headers: {
-              'token': localStorage.getItem('token')
-          },
-          body: JSON.stringify(data)
-      })
-if (response.statusText == "OK") return true;else return false;
-
-}
 
 function App() {
-  console.log(CheckSession());
+  
   return (
     <Router>
    <Switch>
@@ -43,25 +26,11 @@ function App() {
         <Route path="/about-us">
           <AboutUs />
         </Route>
-        <Route path="/dashboard" render={(props)=>{
-            if (!localStorage.getItem('token')) {window.location.href = "/sign-in";}
-            else return <Dashboard/>;}}>
-        </Route>
-        <Route path="/balances"  render={(props)=>{
-            if (!localStorage.getItem('token')) {window.location.href = "/sign-in";}
-            else return <Balances/>;}}>
-        </Route>
-        <Route path="/transaction" render={(props)=>{
-            if (!localStorage.getItem('token')) {window.location.href = "/sign-in";}
-            else return <Transaction/>;}}>
-        </Route>
-        <Route path="/work" render={(props)=>{
-            if (!localStorage.getItem('token')) {window.location.href = "/sign-in";}
-            else return <Work/>;}}>
-        </Route>
-        <Route path="/logout">
-          <Logout/>
-        </Route>
+        <Route path="/dashboard" component={()=><PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/balances" component={()=><PrivateRoute><Balances /></PrivateRoute>} />
+        <Route path="/transaction" component={()=><PrivateRoute><Transaction /></PrivateRoute>} />
+        <Route path="/work" component={()=><PrivateRoute><Work /></PrivateRoute>} />
+        <Route path="/logout" component={()=><PrivateRoute><Logout /></PrivateRoute>} />
       </Switch>
     </Router>
   )

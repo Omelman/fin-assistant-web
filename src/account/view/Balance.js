@@ -68,13 +68,6 @@ export const Balance = ({ className, amount, currency, ...rest }) => {
           display="flex"
           alignItems="center"
         >
-          <ArrowDownwardIcon className={classes.differenceIcon} />
-          <Typography
-            className={classes.differenceValue}
-            variant="body2"
-          >
-            12%
-          </Typography>
           <Typography
             color="textSecondary"
             variant="caption"

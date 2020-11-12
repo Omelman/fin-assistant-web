@@ -1,5 +1,6 @@
 import NavbarMenu from '../components/NavbarMenu';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Container,
   Grid,
@@ -15,21 +16,36 @@ const useStyles = makeStyles((theme) => ({
        paddingTop: theme.spacing(3)
      }
    }));
-   
-  var arr =  [
-    {
-        amount: '1000',
-        currency: 'USD'
-    },
-    {
-        amount: '432',
-        currency:'EUR'
-    }
-];
-  
+
+
+
  const Balances = () => {
      const classes = useStyles();
-   
+     const [arr, setData] = useState({ data: [] });
+     useEffect(() => {
+      async function fetchData() {
+       
+        const res = await fetch('https://cors-anywhere.herokuapp.com/http://159.224.16.138:8000/assistant/balance', {
+        method: 'GET',
+        headers: {
+        'token': localStorage.getItem('token'),
+        'user-id': localStorage.getItem('user-id')
+        }
+        });       
+          return res;
+       }
+
+      let fun = fetchData().then(
+        res=>{
+          let promise = res.json(); 
+          promise.then(
+          r => {
+            setData(r);
+           });
+        }
+      );
+    }, []);
+
      return (
       <>
       <NavbarMenu/>
@@ -39,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
              spacing={3}
            >
            {
-          arr.map((ObjectMapped, index) => (
+          arr.data.map((ObjectMapped) => (
             <Grid
              item
              lg={3} 
@@ -47,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
              xl={3}
              xs={12}
            >
-           <Balance amount = {ObjectMapped.amount} currency = {ObjectMapped.currency} />
+           <Balance amount = "100" currency = {ObjectMapped.attributes.currency} />
           </Grid>
           ))
           } 
@@ -55,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
          </Container>
          </>
      );
+     
    };
    
    export default Balances;

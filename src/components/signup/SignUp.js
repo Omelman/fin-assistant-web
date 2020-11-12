@@ -35,17 +35,13 @@ class SignUp extends React.Component {
             console.log(data);
             this.setState({ isFormSent: true })
         }, 1000)*/
-        // fetch('http://159.224.16.138:2020/authorization/sign-up', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     credentials: 'include',
-        //     body: JSON.stringify(data)
-        // })
-        //     .then(res => {
-
-        //     })
+         fetch('http://159.224.16.138:8000/assistant/sign-up', {
+             method: 'POST',
+             body: JSON.stringify(data)
+           })
+             .then(res => {
+              if (res.statusText == "OK") alert("OK"); else alert("Failed")
+             })
     }
 
     render() {

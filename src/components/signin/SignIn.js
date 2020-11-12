@@ -23,23 +23,25 @@ export const SignIn = () => {
             }
         }
         
-        fetch('http://159.224.16.138:8000/assistant/sign-in', {
+        fetch('https://cors-anywhere.herokuapp.com/http://159.224.16.138:8000/assistant/sign-in', {
             method: 'POST',
             body: JSON.stringify(data)
         })
             .then(res => {
-                if (res.statusText == "OK") {
+                if (res.ok) {
                 let promise = res.json(); 
                 promise
                 .then(
                   result => {
                     localStorage.setItem('email',result.data.attributes.email);
                     localStorage.setItem('token',res.headers.get('token'));
+                    localStorage.setItem('user-id',res.headers.get('user-id'));
                     localStorage.setItem('firstname',result.data.attributes.firstname);
                     localStorage.setItem('lastname',result.data.attributes.lastname);
+                    window.location.href = "/dashboard";
                   }
                 );
-                window.location.href = "/dashboard";
+
                 } else alert("failed");
             })
     }

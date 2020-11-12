@@ -2,6 +2,7 @@ import React from 'react';
 import NavbarMenu from '../components/NavbarMenu';
 
 const Dashboard = () => {
+  console.log(localStorage.getItem("token"));
   return (
     <>
    <NavbarMenu/>
