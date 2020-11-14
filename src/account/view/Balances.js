@@ -17,8 +17,6 @@ const useStyles = makeStyles((theme) => ({
      }
    }));
 
-
-
  const Balances = () => {
      const classes = useStyles();
      const [arr, setData] = useState({ data: [] });
@@ -37,12 +35,14 @@ const useStyles = makeStyles((theme) => ({
 
       let fun = fetchData().then(
         res=>{
+          if (res.ok) {
           let promise = res.json(); 
           promise.then(
           r => {
             setData(r);
            });
         }
+      }
       );
     }, []);
 
@@ -71,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
          </Container>
          </>
      );
-     
    };
    
    export default Balances;

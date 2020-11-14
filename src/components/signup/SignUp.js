@@ -31,17 +31,15 @@ class SignUp extends React.Component {
                 }
             }
         }
-    /*  setTimeout(() => {
-            console.log(data);
-            this.setState({ isFormSent: true })
-        }, 1000)*/
-         fetch('http://159.224.16.138:8000/assistant/sign-up', {
+      setTimeout(() => {
+         if (!this.state.isFormSent) fetch('http://159.224.16.138:8000/assistant/sign-up', {
              method: 'POST',
              body: JSON.stringify(data)
            })
              .then(res => {
-              if (res.statusText == "OK") alert("OK"); else alert("Failed")
+              if (res.statusText == "OK") this.setState({ isFormSent: true }); else alert("Failed")
              })
+            }, 1000)
     }
 
     render() {
@@ -57,7 +55,7 @@ class SignUp extends React.Component {
                                 <>
                                     <div className="form-sent">
                                         <p>You are successfully registered.Check your mail</p >
-                                        <h2><a href="/">Login</a></h2>
+                                        <h2><a href="/sign-in">Sign-in</a></h2>
                                     </div>
                                 </>
                                 :
