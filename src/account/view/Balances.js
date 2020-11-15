@@ -1,76 +1,183 @@
+import React, {useEffect} from 'react';
+import MaterialTable from 'material-table';
+import './balance.css'
 import NavbarMenu from '../components/NavbarMenu';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import {
-  Container,
-  Grid,
-  makeStyles
-} from '@material-ui/core';
-import { Balance } from './Balance';
 
-const useStyles = makeStyles((theme) => ({
-     root: {
-       backgroundColor: theme.palette.background.dark,
-       minHeight: '100%',
-       paddingBottom: theme.spacing(3),
-       paddingTop: theme.spacing(3)
-     }
-   }));
-
- const Balances = () => {
-     const classes = useStyles();
-     const [arr, setData] = useState({ data: [] });
-     useEffect(() => {
-      async function fetchData() {
-       
-        const res = await fetch('https://cors-anywhere.herokuapp.com/http://159.224.16.138:8000/assistant/balance', {
-        method: 'GET',
-        headers: {
-        'token': localStorage.getItem('token'),
-        'user-id': localStorage.getItem('user-id')
-        }
-        });       
-          return res;
-       }
-
-      let fun = fetchData().then(
-        res=>{
-          if (res.ok) {
-          let promise = res.json(); 
-          promise.then(
-          r => {
-            setData(r);
-           });
-        }
+export default function Balances() {
+  
+  const [state, setState] = React.useState({
+    columns: [
+      { title: '#', field: 'id', type: 'numeric', editable: 'never' },
+      { title: 'Currency', field: 'currency' },
+      { title: 'Amount', field: 'amount', type: 'numeric' },
+    ],
+    data: [],
+  });
+ // console.log(localStorage.getItem('token'))
+  useEffect(() => {
+    async function fetchData() {
+     
+      const res = await fetch('http://159.224.16.138:8000/assistant/balance', {
+      method: 'GET',
+      headers: {
+      'token': localStorage.getItem('token'),
+      'user-id': localStorage.getItem('user-id')
       }
-      );
-    }, []);
+      });       
+        return res;
+     }
 
-     return (
-      <>
-      <NavbarMenu/>
-         <Container maxWidth={false}>
-           <Grid
-             container
-             spacing={3}
-           >
-           {
-          arr.data.map((ObjectMapped) => (
-            <Grid
-             item
-             lg={3} 
-             sm={6}
-             xl={3}
-             xs={12}
-           >
-           <Balance amount = "100" currency = {ObjectMapped.attributes.currency} />
-          </Grid>
+    let fun = fetchData().then(
+      res=>{
+        if (res.ok) {
+        let promise = res.json(); 
+        promise.then(
+        r => {
+          let nData = [];
+          r.data.map((ObjectMapped, index) => (
+            nData[index] = {
+              id: index + 1,
+              currency: ObjectMapped.attributes.currency,
+              amount: ObjectMapped.attributes.amount,
+              balance_id: ObjectMapped.attributes.balance_id
+            }
           ))
-          } 
-           </Grid>
-         </Container>
-         </>
-     );
-   };
-   
-   export default Balances;
+          setState({columns: [
+            { title: '#', field: 'id', type: 'numeric', editable: 'never' },
+            { title: 'Currency', field: 'currency' },
+            { title: 'Amount', field: 'amount', type: 'numeric', editable: 'never' },
+          ],data:nData})
+         });
+      }
+    }
+    );
+  }, []);
+
+  return (
+    <>
+    <NavbarMenu/>
+    <MaterialTable 
+      title="Balances"
+      columns={state.columns}
+      data={state.data}
+      editable={{
+        onRowAdd: (newData) =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              async function fetchData(reqData) {
+                const res = await fetch('http://159.224.16.138:8000/assistant/balance', {
+                method: 'POST',
+                headers: {
+                'token': localStorage.getItem('token'),
+                'user-id': localStorage.getItem('user-id')
+                },
+                body: JSON.stringify(reqData)
+                });       
+                  return res;
+               }
+
+               let reqData = {
+                "data": {
+                    "attributes": {
+                        "currency": newData.currency
+                    }
+                }
+               }
+            
+               fetchData(reqData).then(
+                res=>{
+                  if (res.ok) {   
+                    //logic
+                    let pro = res.json(); 
+                    pro
+                      .then(
+                        result => {
+                        resolve();
+                        setState((prevState) => {
+                          const data = [...prevState.data];
+                          newData.id = data.length + 1;
+                          newData.amount = 0;
+                          newData.balance_id = result.data.attributes.balance_id;
+                          data.push(newData);
+                          return { ...prevState, data };
+                    }); 
+                  }
+                )      
+                } else {
+                  resolve();
+                  return alert("failed")
+                }
+              }
+              );
+              
+            }, 3000);
+          }),
+        onRowUpdate: (newData, oldData) =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              async function fetchData() {
+                const res = await fetch('http://159.224.16.138:8000/assistant/balance', {
+                method: 'GET',
+                headers: {
+                'token': localStorage.getItem('token'),
+                'user-id': localStorage.getItem('user-id')
+                }
+                });       
+                  return res;
+               }
+               fetchData().then(
+                res=>{
+                  if (res.ok) {   
+                    resolve();
+                    if (oldData) {
+                      setState((prevState) => {
+                        const data = [...prevState.data];
+                        data[data.indexOf(oldData)] = newData;
+                        return { ...prevState, data };
+                      });
+                    }
+                }else {
+                  resolve();
+                  return alert("failed")
+                }
+              }
+              );
+               
+            }, 3000);
+          }),
+        onRowDelete: (oldData) =>
+          new Promise((resolve) => {
+            setTimeout(() => {
+              async function fetchData(balanceId) {
+                const res = await fetch('http://159.224.16.138:8000/assistant/balance/'+balanceId, {
+                method: 'DELETE',
+                headers: {
+                'token': localStorage.getItem('token'),
+                'user-id': localStorage.getItem('user-id')
+                }
+                });       
+                  return res;
+               }
+               fetchData(oldData.balance_id).then(
+                res=>{
+                  if (res.ok) {   
+                    resolve();
+                    setState((prevState) => {
+                    const data = [...prevState.data];
+                    data.splice(data.indexOf(oldData), 1);
+                    return { ...prevState, data };
+                  });
+                }else {
+                  resolve();
+                  return alert("failed")
+                }
+              }
+              );
+              
+            }, 3000);
+          }),
+      }}
+    />
+    </>
+  );
+}
