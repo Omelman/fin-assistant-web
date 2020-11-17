@@ -28,7 +28,7 @@ export default function Balances() {
      }
 
     let fun = fetchData().then(
-      res=>{
+      res=>{  
         if (res.ok) {
         let promise = res.json(); 
         promise.then(
@@ -97,7 +97,8 @@ export default function Balances() {
                           const data = [...prevState.data];
                           newData.id = data.length + 1;
                           newData.amount = 0;
-                          newData.balance_id = result.data.attributes.balance_id;
+                          newData.balance_id = result.data.attributes.id;
+                          console.log(result)
                           data.push(newData);
                           return { ...prevState, data };
                     }); 
@@ -115,17 +116,28 @@ export default function Balances() {
         onRowUpdate: (newData, oldData) =>
           new Promise((resolve) => {
             setTimeout(() => {
-              async function fetchData() {
+              async function fetchData(reqData) {
                 const res = await fetch('http://159.224.16.138:8000/assistant/balance', {
-                method: 'GET',
+                method: 'PUT',
                 headers: {
                 'token': localStorage.getItem('token'),
                 'user-id': localStorage.getItem('user-id')
-                }
+                },
+                body:JSON.stringify(reqData)
                 });       
                   return res;
                }
-               fetchData().then(
+
+               let reqData = {
+                "data": {
+                    "attributes": {
+                        "balance_id": oldData.balance_id,
+                        "currency": newData.currency
+                    }
+                }
+               }
+
+               fetchData(reqData).then(
                 res=>{
                   if (res.ok) {   
                     resolve();
