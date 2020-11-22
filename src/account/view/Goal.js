@@ -1,28 +1,22 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import MaterialTable from 'material-table';
 import './balance.css'
 import NavbarMenu from '../components/NavbarMenu';
 import { format } from 'date-fns';
-import { TextField } from '@material-ui/core';;
 
-export default function Transaction() {
+export default function Goal() {
   
   const [state, setState] = React.useState({
     columns: [
       { title: '#', field: 'id', type: 'numeric', editable: 'never' },
       { title: 'Amount', field: 'amount', type: 'numeric' },
-
       {
-        title: 'Category',
-        field: 'category',
-        lookup: { food: 'Food & Drinks', transportation: 'Transportation', housing:'Housing',
-        vehicle: 'Vehicle', entertainment: 'Life & Entertainment', communication: 'Communication & PC',
-        shopping:'Shopping', expenses: 'Financial expenses', investment:'Investment', income: 'Income'
-      },
+        title: 'Currency',
+        field: 'currency',
       },
       { title: 'Desciption', field: 'description'},
-      { title: 'Include', field: 'include', lookup: { true: 'true', false: 'false' }},
-      { title: 'Date', field: 'date', type: 'date' },
+      { title: 'Start Date', field: 'date_start', type: 'date' },
+      { title: 'Finish Date', field: 'date_finish', type: 'date' },
     ],
     data: [],
   });
@@ -31,7 +25,7 @@ export default function Transaction() {
  useEffect(() => {
   async function fetchData() {
    
-    const res = await fetch('http://159.224.16.138:8000/assistant/transaction', {
+    const res = await fetch('http://159.224.16.138:8000/assistant/goal', {
     method: 'GET',
     headers: {
     'token': localStorage.getItem('token'),
@@ -47,17 +41,16 @@ export default function Transaction() {
       let promise = res.json(); 
       promise.then(
       r => {
+        console.log(r)
         r.data.map((ObjectMapped, index) => {
-          if (ObjectMapped.attributes.include===undefined) ObjectMapped.attributes.include = "false";
           nData[index] = {
             id: index + 1,
-            date: ObjectMapped.attributes.date,
+            date_start: ObjectMapped.attributes.date_start,
+            date_finish: ObjectMapped.attributes.date_finish,
             amount: ObjectMapped.attributes.amount,
             description: ObjectMapped.attributes.description,
-            include: ObjectMapped.attributes.include,
-            category: ObjectMapped.attributes.category,
             currency: ObjectMapped.attributes.balance_id,
-            transaction_id: ObjectMapped.attributes.transaction_id,
+            goal_id: ObjectMapped.attributes.goal_id,
           }
       })
       setState({...state,data:nData });
@@ -93,24 +86,16 @@ fetchBal().then(
         newCol[ObjectMapped.attributes.balance_id] = ObjectMapped.attributes.currency
       ))
       setState({...state, columns:[
-        { title: '#', field: 'id', type: 'numeric', editable: 'never' , filtering: false},
+        { title: '#', field: 'id', type: 'numeric', editable: 'never' },
         { title: 'Amount', field: 'amount', type: 'numeric' },
         {
           title: 'Currency',
           field: 'currency',
           lookup: newCol,
         },
-        {
-          title: 'Category',
-          field: 'category',
-          lookup: { food: 'Food & Drinks', transportation: 'Transportation', housing:'Housing',
-          vehicle: 'Vehicle', entertainment: 'Life & Entertainment', communication: 'Communication & PC',
-          shopping:'Shopping', expenses: 'Financial expenses ',investment:'Investment', income: 'Income'
-        },
-        },
         { title: 'Desciption', field: 'description'},
-        { title: 'Include', field: 'include',lookup: { true: 'true', false: 'false' }},
-        { title: 'Date', field: 'date', type: 'date' },
+        { title: 'Start Date', field: 'date_start', type: 'date' },
+        { title: 'Finish Date', field: 'date_finish', type: 'date' },
       ], data:nData});
     }
   
@@ -118,30 +103,14 @@ fetchBal().then(
 })
 }, []);
 
-const [input, setInput] = React.useState()
 
- function handleChange(e) {
- setInput(e.target.value);
-}
-const handleClick = useEffect(() => {
-  // handle the click event
-}, []);
+
 
   return (
     <>
     <NavbarMenu/>
-    <div>
-      <label > Filter for category:</label>
-        <input type="text" onChange={ handleChange }/>
-        <input
-          type="button"
-          value="Apply"
-          onClick={handleClick}
-        />
-      </div>
-
     <MaterialTable 
-      title="Transaction"
+      title="Goal"
       columns={state.columns}
       data={state.data}
       options={{
@@ -153,7 +122,7 @@ const handleClick = useEffect(() => {
           new Promise((resolve) => {
             setTimeout(() => {
               async function fetchData(reqData) {
-                const res = await fetch('http://159.224.16.138:8000/assistant/transaction', {
+                const res = await fetch('http://159.224.16.138:8000/assistant/goal', {
                 method: 'POST',
                 headers: {
                 'token': localStorage.getItem('token'),
@@ -169,10 +138,9 @@ const handleClick = useEffect(() => {
                     "attributes": {
                       "description": newData.description,
                       "amount": newData.amount.toString(),
-                      "category": newData.category,
-                      "include": newData.include,
                       "balance_id": newData.currency,
-                      "date": (format(newData.date, 'yyyy-MM-dd')).toString()
+                      "date_start": (format(newData.date_start, 'yyyy-MM-dd')).toString(),
+                      "date_finish": (format(newData.date_finish, 'yyyy-MM-dd')).toString()
                     }
                 }
                }
@@ -209,7 +177,7 @@ const handleClick = useEffect(() => {
           new Promise((resolve) => {
             setTimeout(() => {
               async function fetchData(request) {
-                const res = await fetch('http://159.224.16.138:8000/assistant/transaction', {
+                const res = await fetch('http://159.224.16.138:8000/assistant/goal', {
                 method: 'PUT',
                 headers: {
                 'token': localStorage.getItem('token'),
@@ -219,23 +187,25 @@ const handleClick = useEffect(() => {
                 });       
                   return res;
                }
-               let dateC = "";
-               if (typeof newData.date.getMonth === 'function')  dateC  = (format(newData.date, 'yyyy-MM-dd')).toString();else
-               dateC = newData.date;
+               let dateF = "";
+               let dateS = "";
+               if (typeof newData.date_start.getMonth === 'function')  dateS  = (format(newData.date_start, 'yyyy-MM-dd')).toString();else
+               dateS = newData.date_start;
+               if (typeof newData.date_finish.getMonth === 'function')  dateF  = (format(newData.date_finish, 'yyyy-MM-dd')).toString();else
+               dateF = newData.date_finish;
                let reqData = {
                 "data": {
                     "attributes": {
                       "description": newData.description,
                       "amount": newData.amount.toString(),
-                      "category": newData.category,
-                      "include": newData.include,
                       "balance_id": newData.currency,
-                      "date": dateC ,
-                      "transaction_id": oldData.transaction_id
+                      "date_start": dateS,
+                      "date_finish": dateF,
+                      "goal_id": oldData.goal_id
                     }
                 }
                }
-
+                console.log(oldData.goal_id)
                fetchData(reqData).then(
                 res=>{
                   if (res.ok) {   
@@ -260,8 +230,8 @@ const handleClick = useEffect(() => {
         onRowDelete: (oldData) =>
           new Promise((resolve) => {
             setTimeout(() => {
-              async function fetchData(transactionId) {
-                const res = await fetch('http://159.224.16.138:8000/assistant/transaction/'+transactionId, {
+              async function fetchData(goalId) {
+                const res = await fetch('http://159.224.16.138:8000/assistant/goal/'+goalId, {
                 method: 'DELETE',
                 headers: {
                 'token': localStorage.getItem('token'),
@@ -270,7 +240,7 @@ const handleClick = useEffect(() => {
                 });       
                   return res;
                }
-               fetchData(oldData.transaction_id).then(
+               fetchData(oldData.goal_id).then(
                 res=>{
                   if (res.ok) {   
                     resolve();

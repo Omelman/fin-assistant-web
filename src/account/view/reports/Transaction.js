@@ -9,15 +9,7 @@ import { format } from "date-fns";
 // called date-fns to format the date on the ticket
 //format(new Date(ticket.updated_at), "yyyy-MM-dd"
 // define a generatePDF function that accepts a tickets argument
-const generatePDF = () => {
-  let tickets = [
-    {
-      id:1,
-      title:'lolo',
-      request:'lol',
-      status:'lolo',
-    }
-  ];
+const generatePDFTrans = (transactions) => {
 
   // initialize jsPDF
   const doc = new jsPDF();
@@ -28,23 +20,25 @@ const generatePDF = () => {
   const tableRows = [];
 
   // for each ticket pass all its data into an array
-  tickets.forEach(ticket => {
-    const ticketData = [
-      ticket.id,
-      ticket.title,
-      ticket.request,
-      ticket.status,
+  transactions.forEach(transaction => {
+    const transactionData = [
+      transaction.id,
+      transaction.amount,
+      transaction.currency,
+      transaction.description,
+      transaction.category,
+      transaction.include,
+      transaction.date,
       // called date-fns to format the date on the ticket
       
     ];
     // push each tickcet's info into a row
-    tableRows.push(ticketData);
+    tableRows.push(transactionData);
   });
 
   // startY is basically margin-top
   doc.autoTable(tableColumn, tableRows, { 
     startY: 20,
-    styles: { fillColor: "#1b1a1a" },
 });
   const date = Date().split(" ");
   // we use a date string to generate our filename.
@@ -56,4 +50,4 @@ const generatePDF = () => {
   doc.save(`report_${dateStr}.pdf`);
 };
 
-export default generatePDF;
+export default generatePDFTrans;
