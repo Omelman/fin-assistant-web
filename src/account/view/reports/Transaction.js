@@ -44,7 +44,7 @@ const generatePDFTrans = (transactions) => {
   // we use a date string to generate our filename.
   const dateStr = date[0] + date[1] + date[2] + date[3] + date[4];
   // ticket title. and margin-top + margin-left
-  doc.text("Fin-Assistant", 14, 15);
+  doc.text("transaction", 14, 15);
   
   // we define the name of our PDF file.
   doc.save(`report_${dateStr}.pdf`);

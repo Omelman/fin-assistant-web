@@ -10,6 +10,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.21.0",
+    "bootstrap": "^4.5.3",
     "machinelearn": "^2.1.5",
     "material-table": "^1.69.1",
     "material-ui": "^1.0.0-beta.47",
@@ -22,6 +23,7 @@
     "react-google-charts": "^3.0.15",
     "react-icons": "^3.11.0",
     "react-minimal-pie-chart": "^8.1.0",
+    "react-modal": "^3.12.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-vis": "^1.11.7",
@@ -52,7 +54,7 @@
     ]
   },
   "devDependencies": {
-    "react-bootstrap": "^0.32.4"
+    "react-bootstrap": "^1.4.0"
   },
   "main": "index.js",
   "repository": "https://github.com/Omelman/fin-assistant-web.git",

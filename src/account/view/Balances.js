@@ -58,6 +58,9 @@ export default function Balances() {
     <NavbarMenu/>
     <MaterialTable 
       title="Balances"
+      options={{
+        filtering: true
+      }}
       columns={state.columns}
       data={state.data}
       editable={{

@@ -144,11 +144,12 @@ fetchBal().then(
                     }
                 }
                }
-
+               console.log(newData.currency)
                fetchData(reqData).then(
                 res=>{
                   if (res.ok) {   
                     //logic
+                    console.log(res)
                     let pro = res.json(); 
                     pro
                       .then(
