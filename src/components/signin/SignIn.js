@@ -62,11 +62,7 @@ export const SignIn = () => {
                         <input className="form-control" type="password" name="password" id="password" onChange={handleChange} />
                     </div>
                     <button onClick={submit} className="btn btn-dark">Sign in</button>
-                    <div className="row">
-                        <div className="col-6 right">
-                            <small id="emailHelp" className="form-text text-muted"><a href="/sign-up">Don't have an account? Click here</a></small>
-                        </div>
-                    </div>
+                     <a href="/sign-up" >Don't have an account? Click here</a>        
                 </div>
             </div>
         </div>

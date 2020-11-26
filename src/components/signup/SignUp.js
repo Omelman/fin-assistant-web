@@ -39,7 +39,7 @@ class SignUp extends React.Component {
              .then(res => {
               if (res.statusText == "OK") this.setState({ isFormSent: true }); else alert("Failed")
              })
-            }, 1000)
+            }, 600)
     }
 
     render() {

@@ -35,7 +35,7 @@ export default function Goal() {
       return res;
    }
 
-  let fun = fetchData().then(
+  fetchData().then(
     res=>{
       if (res.ok) {
       let promise = res.json(); 
@@ -132,7 +132,7 @@ fetchBal().then(
                 });       
                   return res;
                }
-
+               console.log(newData)
                let reqData = {
                 "data": {
                     "attributes": {
@@ -171,7 +171,7 @@ fetchBal().then(
               }
               );
               
-            }, 3000);
+            }, 600);
           }),
 
         onRowUpdate: (newData, oldData) =>
@@ -225,7 +225,7 @@ fetchBal().then(
               }
               );
                
-            }, 3000);
+            }, 600);
           }),
 
         onRowDelete: (oldData) =>
@@ -257,7 +257,7 @@ fetchBal().then(
               }
               );
               
-            }, 3000);
+            }, 600);
           }),
       }}
     />

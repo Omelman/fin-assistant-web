@@ -34,14 +34,15 @@ export default function Balances() {
         promise.then(
         r => {
           let nData = [];
-          r.data.map((ObjectMapped, index) => (
+          r.data.map((ObjectMapped, index) => {
+            if (ObjectMapped.attributes.amount==undefined)  ObjectMapped.attributes.amount = 0
             nData[index] = {
               id: index + 1,
               currency: ObjectMapped.attributes.currency,
               amount: ObjectMapped.attributes.amount,
               balance_id: ObjectMapped.attributes.balance_id
             }
-          ))
+          })
           setState({columns: [
             { title: '#', field: 'id', type: 'numeric', editable: 'never' },
             { title: 'Currency', field: 'currency' },

@@ -23,7 +23,7 @@ export default class PrivateRoute extends React.Component {
             this.setState({loading:false,authenticated:false,flag:false});    
         }
       );
-    },3000)
+    }, 400)
   }
   render() {
     if(!this.state.flag)
